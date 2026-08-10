@@ -460,8 +460,26 @@ document.querySelectorAll("[data-sync-generic-buy]").forEach(function(link){link
 var search=document.getElementById("syncCatalogSearch"), buttons=document.querySelectorAll("[data-catalog-filter]"), cards=document.querySelectorAll("[data-game-card]"), empty=document.getElementById("syncEmpty"), filter="all";
 function update(){var term=(search.value||"").trim().toLowerCase(), visible=0;cards.forEach(function(card){var matchesName=card.dataset.gameName.indexOf(term)>-1;var matchesFilter=filter==="all"||card.dataset.highlight==="true";card.hidden=!(matchesName&&matchesFilter);if(!card.hidden)visible++;});empty.hidden=visible!==0;}
 search.addEventListener("input",update);buttons.forEach(function(button){button.addEventListener("click",function(){filter=button.dataset.catalogFilter;buttons.forEach(function(item){item.classList.toggle("is-active",item===button);});update();});});
-document.querySelectorAll("[data-carousel-game]").forEach(function(button){button.addEventListener("click",function(){filter="all";search.value=button.dataset.carouselGame;buttons.forEach(function(item){item.classList.toggle("is-active",item.dataset.catalogFilter==="all");});update();document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});});});
-document.querySelectorAll("[data-sync-rail]").forEach(function(rail){var paused=false;function move(direction){var card=rail.querySelector(".sync-rail-card");if(direction>0&&rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-24){rail.scrollTo({left:0,behavior:"smooth"});}else{rail.scrollBy({left:direction*((card?card.offsetWidth:260)+16),behavior:"smooth"});}}rail.addEventListener("mouseenter",function(){paused=true;});rail.addEventListener("mouseleave",function(){paused=false;});rail.addEventListener("focusin",function(){paused=true;});rail.addEventListener("focusout",function(){paused=false;});rail.parentElement.querySelectorAll("[data-rail-dir]").forEach(function(control){control.addEventListener("click",function(){move(Number(control.dataset.railDir));});});setInterval(function(){if(!paused)move(1);},3200);});
+function selectCarouselGame(name){filter="all";search.value=name;buttons.forEach(function(item){item.classList.toggle("is-active",item.dataset.catalogFilter==="all");});update();document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});}
+document.querySelectorAll("[data-sync-rail]").forEach(function(rail){
+var originals=Array.from(rail.children),paused=false,dragging=false,dragMoved=false,startX=0,startScroll=0,lastFrame=performance.now(),manualPauseUntil=0,reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+originals.forEach(function(item){var clone=item.cloneNode(true);clone.setAttribute("aria-hidden","true");clone.tabIndex=-1;rail.appendChild(clone);});
+function loopPoint(){return rail.scrollWidth/2;}
+function normalize(){var point=loopPoint();if(point&&rail.scrollLeft>=point)rail.scrollLeft-=point;}
+function move(direction){var card=rail.querySelector(".sync-rail-card"),point=loopPoint(),amount=(card?card.offsetWidth:420)+24;manualPauseUntil=performance.now()+900;if(direction<0&&rail.scrollLeft<amount&&point)rail.scrollLeft+=point;rail.scrollBy({left:direction*amount,behavior:"smooth"});}
+function animate(now){var elapsed=Math.min(now-lastFrame,50);if(!paused&&!dragging&&!reducedMotion&&!document.hidden&&now>manualPauseUntil){rail.scrollLeft+=elapsed*.045;normalize();}lastFrame=now;requestAnimationFrame(animate);}
+rail.addEventListener("mouseenter",function(){paused=true;});
+rail.addEventListener("mouseleave",function(){if(!dragging&&!rail.matches(":focus-within"))paused=false;});
+rail.addEventListener("focusin",function(){paused=true;});
+rail.addEventListener("focusout",function(){if(!dragging&&!rail.matches(":hover"))paused=false;});
+rail.addEventListener("pointerdown",function(event){if(event.pointerType!=="mouse"||event.button!==0)return;dragging=true;dragMoved=false;paused=true;startX=event.clientX;startScroll=rail.scrollLeft;rail.classList.add("is-dragging");rail.setPointerCapture(event.pointerId);});
+rail.addEventListener("pointermove",function(event){if(!dragging)return;var distance=event.clientX-startX;if(Math.abs(distance)>5)dragMoved=true;rail.scrollLeft=startScroll-distance;normalize();});
+function stopDrag(event){if(!dragging)return;dragging=false;rail.classList.remove("is-dragging");if(rail.hasPointerCapture(event.pointerId))rail.releasePointerCapture(event.pointerId);paused=rail.matches(":hover")||rail.matches(":focus-within");setTimeout(function(){dragMoved=false;},0);}
+rail.addEventListener("pointerup",stopDrag);rail.addEventListener("pointercancel",stopDrag);
+rail.addEventListener("click",function(event){var card=event.target.closest("[data-carousel-game]");if(!card)return;if(dragMoved){event.preventDefault();return;}selectCarouselGame(card.dataset.carouselGame);});
+rail.parentElement.querySelectorAll("[data-rail-dir]").forEach(function(control){control.addEventListener("click",function(){move(Number(control.dataset.railDir));});});
+requestAnimationFrame(animate);
+});
 })();
 </script>
 </body>
