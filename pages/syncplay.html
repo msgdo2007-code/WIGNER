@@ -16,7 +16,8 @@
 <div class="reveal">
 <span class="eyebrow">Jogos para PC • atendimento digital</span>
 <img class="sync-hero-logo" src="../assets/img/syncplaylogo.png" alt="SyncPlay">
-<h1>Escolha seu próximo jogo para PC por apenas R$ 20</h1>
+<h1>Escolha seu próximo <span>jogo para PC.</span></h1>
+<div class="sync-hero-offer"><strong>R$ 20</strong><span>por jogo escolhido</span></div>
 <p class="hero-copy">Encontre grandes jogos, faça seu pedido com segurança e receba todas as instruções para começar a jogar.</p>
 <div class="button-row"><a class="button" href="#descobrir">Explorar jogos</a><a class="button secondary" data-sync-support href="https://wa.me/5521993902153" target="_blank" rel="noopener">Falar com o suporte</a></div>
 <p class="sync-hero-note">Nenhum pagamento é solicitado antes da confirmação de disponibilidade e das condições de acesso.</p>
@@ -448,10 +449,8 @@
 
 <section class="section sync-installer" id="download">
 <div class="container sync-installer-layout">
-<div><span class="eyebrow">Instalador • depois da confirmação</span><h2 class="section-title">Baixe somente quando a instrução de acesso exigir.</h2><p class="section-lead">Você pode navegar e pedir um jogo sem instalar nada. Depois da compra confirmada, o suporte explica se o SyncPlay é necessário e como utilizá-lo.</p><div class="button-row"><a class="button" href="https://github.com/SupremacyGG/syncplay/releases/download/att/SyncPlay.Setup.3.0.0.exe" target="_blank" rel="noopener">Baixar SyncPlay 3.0.0</a><a class="button secondary" href="https://www.virustotal.com/gui/file/7150CF96F533AB08430A83199AFFE604817E5D9DB4E02F0FB499A808546CD5C0" target="_blank" rel="noopener">Consultar hash no VirusTotal ↗</a></div></div>
-<div class="installer-facts">
-<div><small>Arquivo</small><strong>SyncPlay.Setup.3.0.0.exe</strong></div><div><small>Tamanho</small><strong>195,3 MB</strong></div><div><small>Compatibilidade</small><strong>Windows</strong></div><div><small>Publicação do arquivo</small><strong>31 JUL 2026 • 22:45</strong></div><div><small>Distribuição</small><strong>Repositório SupremacyGG no GitHub</strong></div><div class="installer-warning"><small>Assinatura digital</small><strong>Não assinado — o Windows pode exibir um alerta</strong></div><div class="installer-hash"><small>SHA-256</small><code>7150CF96F533AB08430A83199AFFE604817E5D9DB4E02F0FB499A808546CD5C0</code></div><div><small>Como remover</small><strong>Configurações do Windows › Aplicativos › SyncPlay › Desinstalar</strong></div>
-</div>
+<div class="sync-installer-copy"><span class="eyebrow">Aplicativo SyncPlay</span><h2 class="section-title">Baixe quando o suporte orientar.</h2><p class="section-lead">Escolha um jogo primeiro. Depois da confirmação, baixe o aplicativo apenas se ele fizer parte das instruções de acesso.</p><p class="sync-selected-game" id="syncSelectedGame" hidden></p><div class="button-row"><a class="button" href="https://github.com/SupremacyGG/syncplay/releases/download/att/SyncPlay.Setup.3.0.0.exe" target="_blank" rel="noopener">Baixar para Windows</a><a class="button secondary" href="https://discord.gg/uEuBmPuXUQ" target="_blank" rel="noopener">Suporte no Discord ↗</a></div><p class="sync-installer-meta">Versão 3.0.0 <span>•</span> Windows <span>•</span> 195,3 MB <span>•</span> Atualizado em 31 JUL 2026</p></div>
+<aside class="sync-install-guide"><span>Antes de abrir</span><h3>Três passos simples.</h3><ol><li><b>1</b><div><strong>Escolha o jogo</strong><small>Clique em uma capa nos carrosséis.</small></div></li><li><b>2</b><div><strong>Confirme com o suporte</strong><small>Entenda o acesso antes de instalar.</small></div></li><li><b>3</b><div><strong>Baixe e siga as instruções</strong><small>O Windows pode alertar porque o arquivo não é assinado.</small></div></li></ol></aside>
 </div>
 </section>
 
@@ -473,7 +472,7 @@ search.addEventListener("input",update);buttons.forEach(function(button){button.
 var lightbox=document.getElementById("syncLightbox"),lightboxImage=lightbox.querySelector("img"),lightboxCaption=lightbox.querySelector("p");
 document.querySelectorAll("[data-lightbox-src]").forEach(function(button){button.addEventListener("click",function(){lightboxImage.src=button.dataset.lightboxSrc;lightboxImage.alt=button.dataset.lightboxCaption;lightboxCaption.textContent=button.dataset.lightboxCaption;lightbox.showModal();});});
 lightbox.querySelector(".sync-lightbox-close").addEventListener("click",function(){lightbox.close();});lightbox.addEventListener("click",function(event){if(event.target===lightbox)lightbox.close();});
-function selectCarouselGame(name){window.open(whatsapp("Olá! Quero comprar "+name+" pelo SyncPlay por R$ 20. Pode confirmar a disponibilidade e explicar o modelo de acesso antes do pagamento?"),"_blank","noopener");}
+function selectCarouselGame(name){var target=document.getElementById("download"),selected=document.getElementById("syncSelectedGame");selected.textContent="Jogo escolhido: "+name+". Confira abaixo quando o instalador deve ser usado.";selected.hidden=false;target.scrollIntoView({behavior:"smooth",block:"start"});if(history.replaceState)history.replaceState(null,"","#download");}
 document.querySelectorAll("[data-sync-rail]").forEach(function(rail){
 var originals=Array.from(rail.children),paused=false,dragging=false,dragMoved=false,startX=0,startScroll=0,lastFrame=performance.now(),manualPauseUntil=0,reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 originals.forEach(function(item){var clone=item.cloneNode(true);clone.setAttribute("aria-hidden","true");clone.tabIndex=-1;rail.appendChild(clone);});
